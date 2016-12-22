@@ -1,0 +1,94 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+
+	<!-- <script type="text/javascript" src="{{ url_for('static', filename='overload.js') }}"></script>  -->
+	<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.js') }}"></script>
+
+	<script type="text/javascript" src="{{ url_for('static', filename='gpkit.js') }}"></script>
+	<script src="{{ url_for('static', filename='lib/codemirror.js') }}"></script>
+	<link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='lib/codemirror.css') }}">
+	<link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='lib/solarized.css') }}">
+	<script src="{{ url_for('static', filename='mode/javascript/javascript.js') }}"></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='web-interface-style.css') }}"></link>
+	<script>
+		//Add number operator overload, plan to get rid of this init step
+		r=setupNums()
+		//
+		// // Decision variable
+		// x = new Variable('x');
+		//
+		// constraints = [];
+		//
+		// overload(function(){
+		//     constraints.push(x>=1)
+		// })();
+		//
+		// // Objective (to minimize)
+		// objective = new Posynomial([new Monomial([[x,1]],1)])
+		//
+		// // Formulate the Model
+		// m = new Model(objective, constraints)
+		//
+		// target = '/solve'
+		// // Solve the model
+		// sol = m.solve(target,function(){
+		// 	$('.output').html('<p>x: ' + sol.getVal(x))
+		// })
+		performOpt = function(){
+			eval(inputCodeMirror.getValue())
+		}
+	</script>
+
+
+	<div class="inputs">
+		<textarea id ="inputTextArea"></textarea>
+		<button onclick="performOpt()">Run</button>
+	</div>
+	<h1>Output</h1>
+	<div class="output"></div>
+	<script>
+		var editorWidth = 500
+		var editorHeight = 800
+		var exampleCode= "// Decision variable\n\
+x = new Variable('x');\n\
+\n\
+constraints = [];\n\
+\n\
+overload(function(){\n\
+	constraints.push(x>=1)\n\
+})();\n\
+\n\
+// Objective (to minimize)\n\
+objective = null;\n\
+\n\
+overload(function(){\n\
+	objective = 1*x\n\
+})();\n\
+\n\
+// Formulate the Model\n\
+m = new Model(objective, constraints)\n\
+\n\
+target = '/solve'\n\
+// Solve the model\n\
+sol = m.solve(target,function(){\n\
+	$('.output').html('<p>x: ' + sol.getVal(x))\n\
+})"
+
+
+		inputTextArea = document.getElementById('inputTextArea')
+		inputCodeMirror = CodeMirror.fromTextArea(inputTextArea , {value:'Variables go in here', mode: "javascript",theme:"solarized dark",lineNumbers: false})
+
+		inputCodeMirror.setValue(exampleCode)
+		inputCodeMirror.setSize(editorWidth,editorHeight)
+
+		// constraintsTextArea = document.getElementById('constraintsTextArea')
+		// constraintsCodeMirror = CodeMirror.fromTextArea(constraintsTextArea , {value:'the og potato', mode: "javascript",theme:"solarized dark",lineNumbers: false})
+		// variablesCodeMirror.setSize(editorWidth,editorHeight)
+		//
+		// objectiveTextArea = document.getElementById('objectiveTextArea')
+		// objectiveCodeMirror = CodeMirror.fromTextArea(objectiveTextArea , {value:'the og potato', mode: "javascript",theme:"solarized dark",lineNumbers: false})
+		// variablesCodeMirror.setSize(editorWidth,editorHeight)
+	</script>
+{% endblock %}

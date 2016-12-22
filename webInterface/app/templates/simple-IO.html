@@ -1,0 +1,73 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+	<script type="text/javascript" src="{{ url_for('static', filename='nouislider.min.js') }}"></script>
+ 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='nouislider.min.css') }}"></link>
+
+	<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.js') }}"></script>
+
+	<script type="text/javascript" src="{{ url_for('static', filename='gpkit.js') }}"></script>
+
+	<script>
+
+	    $(document).ready(function() {
+	      // Set up the slider
+	      var slider = document.getElementById('slider'); 
+	            noUiSlider.create(slider, {
+	          start: 20,
+	          range: {
+	            'min': 0,
+	            'max': 100
+	          }
+	      });
+	      slider.noUiSlider.on('update', function( values, handle ) {
+	        if ( handle ) {
+	          //We don't use handle values
+
+	        } else {
+	          performOpt(parseInt(values))
+	        }
+	      });
+
+	    });
+
+	    performOpt = function(minX){
+
+	    	//Add number operator overload, plan to get rid of this init step
+
+			r=setupNums()
+
+			// Decision variable
+			x = new Variable('x');
+
+			constraints = [];
+			
+			overload(function(minX){
+			    constraints.push(x>=minX)
+			})(minX);
+
+			// Objective (to minimize)
+			objective = new Posynomial([new Monomial([[x,1]],1)])
+			
+			// Formulate the Model
+			m = new Model(objective, constraints)
+			
+			target = '/simple'
+			// Solve the model
+			sol = m.solve(target,function(){
+				// When the model is solved, update UI
+				updateOutput(sol.getVal(x))
+			})
+	    }
+
+	    updateOutput = function(xResult){
+	    	$('#output').html('<p>x: ' + xResult)
+	    }
+		
+
+	</script>
+	<p>Control x minimum bound with slider</p>
+	<div id="slider" style="width:30%"></div>
+	<div id="output"></div>
+{% endblock %}

@@ -1,0 +1,8 @@
+.inputs{
+	display: inline-flex;
+}
+.CodeMirror{
+	width:400px;
+	height:400px;
+	margin-left:20px;
+}
